@@ -1,0 +1,3 @@
+signalbot
+aiosqlite  # Keep for reference, but not used with Postgres
+asyncpg    # Add this
