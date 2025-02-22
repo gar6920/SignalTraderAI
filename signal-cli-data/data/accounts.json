@@ -1,4 +1,9 @@
 {
-  "accounts" : [ ],
+  "accounts" : [ {
+    "path" : "284371",
+    "environment" : "LIVE",
+    "number" : "+18122433247",
+    "uuid" : "369fbb07-9fc5-45f9-b737-2aaaf6637669"
+  } ],
   "version" : 2
 }

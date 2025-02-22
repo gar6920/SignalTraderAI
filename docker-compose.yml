@@ -25,6 +25,7 @@ services:
   signal-bot:
     build: .
     container_name: signal-bot
+    command: python main.py  # Explicitly run main.py
     depends_on:
       - signal-cli-rest-api
       - postgres
