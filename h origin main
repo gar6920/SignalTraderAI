@@ -1,0 +1,17 @@
+[33mcommit 6c78357dc6652428ace4a6ddcfbf638a86b76a47[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: gar6920 <gar6920@gmail.com>
+Date:   Fri Feb 21 20:08:14 2025 -0500
+
+    pings pongs to individual but not group, still not detecting when linked or no
+
+[33mcommit 53aa379f44be53bd6cd08178874c57c5df4dc69d[m[33m ([m[1;31morigin/main[m[33m)[m
+Author: gar6920 <gar6920@gmail.com>
+Date:   Fri Feb 21 01:31:00 2025 -0500
+
+    update
+
+[33mcommit 97d50c713d2e6feabcc015b6062b08dfa6310384[m
+Author: gar6920 <gar6920@gmail.com>
+Date:   Thu Feb 20 22:33:19 2025 -0500
+
+    Initial commit

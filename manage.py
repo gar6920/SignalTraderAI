@@ -31,25 +31,58 @@ def wait_for_api():
     return False
 
 def is_linked():
-    """Check if the bot is linked by running signal-bot briefly."""
+    """Check if the bot is linked using the D-Bus interface inside the signal-cli-rest-api container."""
     try:
-        # Start signal-cli-rest-api first
+        # Start signal-cli-rest-api first if not already running
         subprocess.check_call(['docker-compose', 'up', '-d', 'signal-cli-rest-api'])
         if not wait_for_api():
             print("signal-cli-rest-api failed to start properly.")
             return False
+
+        # Define a Python script to check D-Bus status
+        check_script = """
+import dbus
+try:
+    bus = dbus.SessionBus()
+    service_names = bus.list_names()
+    if "org.asamk.Signal" in service_names:
+        service = bus.get_object("org.asamk.Signal", "/")
+        interface = dbus.Interface(service, "org.asamk.Signal")
+        registered = interface.isRegistered()
+        connected = interface.isConnected()
+        if registered and connected:
+            print("Linked")
+        else:
+            print("Not linked")
+    else:
+        print("Not linked")
+except Exception as e:
+    print(f"Error: {e}")
+"""
+        # Write the script to a temporary file
+        with open('check_dbus.py', 'w') as f:
+            f.write(check_script)
+
+        # Copy the script into the container
+        subprocess.check_call(['docker', 'cp', 'check_dbus.py', 'signal-cli-rest-api:/check_dbus.py'])
+
+        # Run the script inside the container
         result = subprocess.run(
-            ['docker-compose', 'run', '--rm', 'signal-bot'],
-            capture_output=True, text=True, timeout=15
+            ['docker', 'exec', 'signal-cli-rest-api', 'python3', '/check_dbus.py'],
+            capture_output=True, text=True
         )
-        if "Bot is not linked" in result.stderr or result.returncode != 0:
-            print("Detected unlinked state or error in signal-bot.")
+
+        # Clean up temporary files
+        os.remove('check_dbus.py')
+        subprocess.run(['docker', 'exec', 'signal-cli-rest-api', 'rm', '/check_dbus.py'])
+
+        # Check the result
+        if "Linked" in result.stdout:
+            print("Signal-bot is linked.")
+            return True
+        else:
+            print("Signal-bot is not linked.")
             return False
-        print("Signal-bot started successfully, assuming linked.")
-        return True
-    except subprocess.TimeoutExpired:
-        print("Signal-bot check timed out, assuming linked.")
-        return True
     except Exception as e:
         print(f"Error checking linking status: {e}")
         return False
